@@ -211,7 +211,12 @@ MonoBehaviour:
   WallSliderLayer:
     serializedVersion: 2
     m_Bits: 128
+  wallJumpLockTimer: 0.5
+  wallJumpForce: {x: 5, y: 8}
   jumpBufferTimer: 0.5
+  extraJumps: 1
+  maxDistanceFromGround: 5
+  minDistanceForJump: 1.5
 --- !u!114 &6211340679337171407
 MonoBehaviour:
   m_ObjectHideFlags: 0

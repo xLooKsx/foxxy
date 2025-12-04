@@ -4,10 +4,13 @@ public class PlayerCollisionHandler : MonoBehaviour
 {
 
     private PlayerHealthManager playerHealthManager;
+    private PlayerController player;
+    [SerializeField] IActivalbleStats interaction;
 
     void Start()
     {
         playerHealthManager = GetComponent<PlayerHealthManager>();
+        player = GetComponent<PlayerController>();
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -17,6 +20,23 @@ public class PlayerCollisionHandler : MonoBehaviour
         {
             case "Danger":
                 playerHealthManager.HandleDamage(defaultDamage);
+                break;
+
+            case "Interaction":
+                if(collision.gameObject.TryGetComponent<IActivalbleStats>(out IActivalbleStats output)){
+                    player.SetInteraction(output);
+                }
+                break;
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+
+            case "Interaction":
+                player.SetInteraction(null);
                 break;
         }
     }

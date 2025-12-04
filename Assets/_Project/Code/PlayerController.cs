@@ -36,6 +36,8 @@ public class PlayerController : MonoBehaviour
     private int wallJumpDirection;
     private float wallJumpCurrentLockTimer;
 
+    [Header("Interactions")]
+    [SerializeField] private IActivalbleStats interaction;
 
     [Header("JumpBuffer")]
     [SerializeField] private float jumpBufferTimer;
@@ -48,10 +50,11 @@ public class PlayerController : MonoBehaviour
     private bool hasJumped;
     private int extraJumpsLeft;
 
-
     [Header("Components")]
     private Rigidbody2D myRigidBody;
     private Animator animator;
+
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -87,7 +90,32 @@ public class PlayerController : MonoBehaviour
         // else
         // {
         bool wasGrounded = isGrounded;
-        isGrounded = Physics2D.OverlapCircle(transform.position, groundLayerRadius, groundLayer);
+        Collider2D col = Physics2D.OverlapCircle(transform.position, groundLayerRadius, groundLayer);
+
+        if (col != null)
+        {
+
+            if (myRigidBody.linearVelocityY > 0)
+            {
+                if (col.GetComponent<PlatformEffector2D>() != null)
+                {
+                    isGrounded = false;
+                }
+                else
+                {
+                    isGrounded = true;
+                }
+            }
+            else
+            {
+                isGrounded = true;
+            }
+        }
+        else
+        {
+            isGrounded = false;
+        }
+
         if (isGrounded && !wasGrounded)
         {
             extraJumpsLeft = extraJumps;
@@ -129,6 +157,11 @@ public class PlayerController : MonoBehaviour
         {
             myRigidBody.linearVelocityX = movementSpeed * horizontalMovement;
             DefinePlayerLookDirection(horizontalMovement);
+        }
+
+        if (Input.GetKeyDown(KeyCode.F) && this.interaction != null)
+        {
+            this.interaction.Active();
         }
 
     }
@@ -253,5 +286,10 @@ public class PlayerController : MonoBehaviour
 
         Vector2 stompLocation = (Vector2)transform.position + stompBoxColliderOffset;
         Gizmos.DrawWireCube(stompLocation, stompBoxColliderSize);
+    }
+
+    public void SetInteraction(IActivalbleStats activalbleStats)
+    {
+        this.interaction = activalbleStats;
     }
 }
