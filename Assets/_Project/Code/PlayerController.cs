@@ -54,6 +54,13 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D myRigidBody;
     private Animator animator;
 
+    [Header("Dash")]
+    [SerializeField] private bool isDashing;
+    [SerializeField] private float dashForce;
+    [SerializeField] private float dashDuration;
+    [SerializeField] private float currentDashTime;
+
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -83,12 +90,6 @@ public class PlayerController : MonoBehaviour
 
     private void HandlePlayerGroundedStatus()
     {
-        // if (myRigidBody.linearVelocityY > 0)
-        // {
-        //     isGrounded = false;
-        // }
-        // else
-        // {
         bool wasGrounded = isGrounded;
         Collider2D col = Physics2D.OverlapCircle(transform.position, groundLayerRadius, groundLayer);
 
@@ -145,16 +146,36 @@ public class PlayerController : MonoBehaviour
 
     private void HandlePlayerInput()
     {
-        float horizontalMovement = Input.GetAxis("Horizontal");
-        isWalking = horizontalMovement != 0;
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded && !isDashing)
+        {
+            isDashing = true;
+            int dashDirection = isLookingLeft ? -1 : 1;
+            myRigidBody.linearVelocityX = this.dashForce * dashDirection;   
+        }
+        
 
         HandleJumpInput();
         if (wallJumpCurrentLockTimer > 0)
         {
             wallJumpCurrentLockTimer -= Time.deltaTime;
         }
-        else
+        else if (isDashing)
         {
+            if (currentDashTime < dashDuration)
+            {
+                currentDashTime += Time.deltaTime;
+            }
+            else
+            {
+                isDashing = false;
+                currentDashTime = 0;
+            }
+        }
+        else if (!isDashing)
+        {
+            float horizontalMovement = Input.GetAxis("Horizontal");
+            isWalking = horizontalMovement != 0;
             myRigidBody.linearVelocityX = movementSpeed * horizontalMovement;
             DefinePlayerLookDirection(horizontalMovement);
         }
@@ -247,6 +268,7 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("velocityY", myRigidBody.linearVelocityY);
         animator.SetBool("isGrounded", isGrounded);
         animator.SetFloat("isWallSlide", isTouchingAWall ? 1 : 0);
+        animator.SetBool("isDashing", isDashing);
     }
 
     void CheckWallSliderInteraction()
