@@ -140,7 +140,7 @@ public class PlayerController : MonoBehaviour
             Collider2D collider2D = Physics2D.OverlapBox(stompLocation, stompBoxColliderSize, 0, stompLayer);
             if (collider2D != null)
             {
-                if (collider2D.TryGetComponent<EnemyHealthManager>(out EnemyHealthManager script))
+                if (collider2D.TryGetComponent<IDamage>(out IDamage script))
                 {
                     script.HandleDamage(1);
                 }
