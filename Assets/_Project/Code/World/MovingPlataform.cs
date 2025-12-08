@@ -4,11 +4,12 @@ using NUnit.Framework;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class MovingPlataform : MonoBehaviour
+public class MovingPlataform : MonoBehaviour, IActivalbleStats
 {
 
     [SerializeField] private Transform[] waypoints;
     [SerializeField] private float movementSpeed;
+    [SerializeField] private bool isActive;
     private Transform currentPoint;
     private Transform nextPoint;
     private bool isOnReverse;
@@ -26,11 +27,14 @@ public class MovingPlataform : MonoBehaviour
     {
         if (waypoints.Length >= 2)
         {
-            MovePlataform();
-
-            if (Vector2.Distance(currentPoint.position, nextPoint.position) < 0.1f)
+            if (isActive)
             {
-                FetchNextPlataformWayPoint();
+                MovePlataform();
+
+                if (Vector2.Distance(currentPoint.position, nextPoint.position) < 0.1f)
+                {
+                    FetchNextPlataformWayPoint();
+                }
             }
 
         }
@@ -65,5 +69,10 @@ public class MovingPlataform : MonoBehaviour
     {
         isOnReverse = !isOnReverse;
         return nextIndex += nextIndexValue;
+    }
+
+    public void Active()
+    {
+        this.isActive = true;
     }
 }

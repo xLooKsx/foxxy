@@ -36,6 +36,8 @@ public class PlayerController : MonoBehaviour
     private int wallJumpDirection;
     private float wallJumpCurrentLockTimer;
 
+    [Header("Interactions")]
+    [SerializeField] private IActivalbleStats interaction;
 
     [Header("JumpBuffer")]
     [SerializeField] private float jumpBufferTimer;
@@ -48,10 +50,20 @@ public class PlayerController : MonoBehaviour
     private bool hasJumped;
     private int extraJumpsLeft;
 
-
     [Header("Components")]
     private Rigidbody2D myRigidBody;
     private Animator animator;
+
+    [Header("Dash")]
+    [SerializeField] private bool isDashing;
+    [SerializeField] private float dashForce;
+    [SerializeField] private float dashDuration;
+    [SerializeField] private float currentDashTime;
+
+    [Header("Enviroment Metrics")]
+    [SerializeField] private GameState currentGameState;
+
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -59,12 +71,16 @@ public class PlayerController : MonoBehaviour
         myRigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         extraJumpsLeft = extraJumps;
+        Core.Instance.GameStateManager.OnGameStateChanged += OnGameStateChanged;
     }
 
     // Update is called once per frame
     void Update()
     {
-        HandlePlayerInput();
+        if(currentGameState == GameState.GamePlay)
+        {
+            HandlePlayerInput();    
+        }
         ChangePlayerAnimation();
         CheckCoyoteJumpTime();
         CheckBufferJump();
@@ -80,14 +96,33 @@ public class PlayerController : MonoBehaviour
 
     private void HandlePlayerGroundedStatus()
     {
-        // if (myRigidBody.linearVelocityY > 0)
-        // {
-        //     isGrounded = false;
-        // }
-        // else
-        // {
         bool wasGrounded = isGrounded;
-        isGrounded = Physics2D.OverlapCircle(transform.position, groundLayerRadius, groundLayer);
+        Collider2D col = Physics2D.OverlapCircle(transform.position, groundLayerRadius, groundLayer);
+
+        if (col != null)
+        {
+
+            if (myRigidBody.linearVelocityY > 0)
+            {
+                if (col.GetComponent<PlatformEffector2D>() != null)
+                {
+                    isGrounded = false;
+                }
+                else
+                {
+                    isGrounded = true;
+                }
+            }
+            else
+            {
+                isGrounded = true;
+            }
+        }
+        else
+        {
+            isGrounded = false;
+        }
+
         if (isGrounded && !wasGrounded)
         {
             extraJumpsLeft = extraJumps;
@@ -117,18 +152,43 @@ public class PlayerController : MonoBehaviour
 
     private void HandlePlayerInput()
     {
-        float horizontalMovement = Input.GetAxis("Horizontal");
-        isWalking = horizontalMovement != 0;
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded && !isDashing)
+        {
+            isDashing = true;
+            int dashDirection = isLookingLeft ? -1 : 1;
+            myRigidBody.linearVelocityX = this.dashForce * dashDirection;   
+        }
+        
 
         HandleJumpInput();
         if (wallJumpCurrentLockTimer > 0)
         {
             wallJumpCurrentLockTimer -= Time.deltaTime;
         }
-        else
+        else if (isDashing)
         {
+            if (currentDashTime < dashDuration)
+            {
+                currentDashTime += Time.deltaTime;
+            }
+            else
+            {
+                isDashing = false;
+                currentDashTime = 0;
+            }
+        }
+        else if (!isDashing)
+        {
+            float horizontalMovement = Input.GetAxis("Horizontal");
+            isWalking = horizontalMovement != 0;
             myRigidBody.linearVelocityX = movementSpeed * horizontalMovement;
             DefinePlayerLookDirection(horizontalMovement);
+        }
+
+        if (Input.GetKeyDown(KeyCode.F) && this.interaction != null)
+        {
+            this.interaction.Active();
         }
 
     }
@@ -214,6 +274,7 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("velocityY", myRigidBody.linearVelocityY);
         animator.SetBool("isGrounded", isGrounded);
         animator.SetFloat("isWallSlide", isTouchingAWall ? 1 : 0);
+        animator.SetBool("isDashing", isDashing);
     }
 
     void CheckWallSliderInteraction()
@@ -244,6 +305,11 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
+    void OnGameStateChanged(GameState newGameState)
+    {
+        this.currentGameState = newGameState;
+    }
+
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.blue;
@@ -253,5 +319,10 @@ public class PlayerController : MonoBehaviour
 
         Vector2 stompLocation = (Vector2)transform.position + stompBoxColliderOffset;
         Gizmos.DrawWireCube(stompLocation, stompBoxColliderSize);
+    }
+
+    public void SetInteraction(IActivalbleStats activalbleStats)
+    {
+        this.interaction = activalbleStats;
     }
 }
