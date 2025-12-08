@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyHealthManager : MonoBehaviour
+public class EnemyHealthManager : MonoBehaviour, IDamage
 {
 
     [Header("HealthParam")]
