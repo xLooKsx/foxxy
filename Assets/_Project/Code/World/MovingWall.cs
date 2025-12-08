@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class MovingWall : MonoBehaviour, IActivalbleStats
@@ -7,6 +8,7 @@ public class MovingWall : MonoBehaviour, IActivalbleStats
     [SerializeField] private Transform initialPosition;
     [SerializeField] private Transform finalPosition;
     [SerializeField] private float movementSpeed;
+    [SerializeField] private GameObject cutsceneCamera;
     private bool isActive;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -28,5 +30,19 @@ public class MovingWall : MonoBehaviour, IActivalbleStats
     public void Active()
     {
         this.isActive = true;
+        Core.Instance.GameStateManager.SetNewGameState(GameState.Cutscene);
+        if(this.cutsceneCamera != null)
+        {
+            StartCoroutine(nameof(CutsceneCorroutine));    
+        }
+        
+    }
+
+    IEnumerator CutsceneCorroutine()
+    {
+        this.cutsceneCamera.SetActive(true);
+        yield return new WaitUntil(() => this.targetObject.position == this.finalPosition.position);
+        this.cutsceneCamera.SetActive(false);
+        Core.Instance.GameStateManager.SetNewGameState(GameState.GamePlay);
     }
 }

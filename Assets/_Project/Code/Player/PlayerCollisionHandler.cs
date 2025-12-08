@@ -46,6 +46,7 @@ public class PlayerCollisionHandler : MonoBehaviour
         if (collision.gameObject.CompareTag("MovingPlataform"))
         {
             this.transform.parent = collision.transform;
+            player.GetComponent<Rigidbody2D>().interpolation = RigidbodyInterpolation2D.None;
         }
     }
 
@@ -54,6 +55,7 @@ public class PlayerCollisionHandler : MonoBehaviour
         if (collision.gameObject.CompareTag("MovingPlataform"))
         {
             this.transform.parent = null;
+            player.GetComponent<Rigidbody2D>().interpolation = RigidbodyInterpolation2D.Interpolate;
         }
     }
 }

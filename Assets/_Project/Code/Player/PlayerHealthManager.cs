@@ -7,7 +7,7 @@ public class PlayerHealthManager : MonoBehaviour
 
     [Header("Health Status")]
     [SerializeField] private int maxHp;
-    private int currentHp;
+    [SerializeField] private int currentHp;
     private bool isInvunerable;
 
     [Header("Components")]
@@ -17,6 +17,7 @@ public class PlayerHealthManager : MonoBehaviour
     {
         currentHp = maxHp;
         isInvunerable = false;
+        Core.Instance.GameManager.SetCheckPoint(transform.position);
     }
 
     public void HandleDamage(int value, bool isDead = false)
@@ -49,7 +50,16 @@ public class PlayerHealthManager : MonoBehaviour
 
     private void HandlePlayerDeath()
     {
-        print("Player is dead, sad...");
+        if (Core.Instance.GameManager.playerHaveExtraLive())
+        {
+            Core.Instance.GameManager.AddExtraLive(-1);
+            this.currentHp = this.maxHp;
+        }
+        else
+        {
+            transform.position = Core.Instance.GameManager.GetCheckPoint();
+        }
+
     }
 
     IEnumerator ShowPlayerDamageCurotine()

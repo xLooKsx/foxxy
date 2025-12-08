@@ -60,6 +60,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dashDuration;
     [SerializeField] private float currentDashTime;
 
+    [Header("Enviroment Metrics")]
+    [SerializeField] private GameState currentGameState;
 
 
 
@@ -69,12 +71,16 @@ public class PlayerController : MonoBehaviour
         myRigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         extraJumpsLeft = extraJumps;
+        Core.Instance.GameStateManager.OnGameStateChanged += OnGameStateChanged;
     }
 
     // Update is called once per frame
     void Update()
     {
-        HandlePlayerInput();
+        if(currentGameState == GameState.GamePlay)
+        {
+            HandlePlayerInput();    
+        }
         ChangePlayerAnimation();
         CheckCoyoteJumpTime();
         CheckBufferJump();
@@ -297,6 +303,11 @@ public class PlayerController : MonoBehaviour
             return groudHit.distance >= minDistanceForJump;
         }
         return false;
+    }
+
+    void OnGameStateChanged(GameState newGameState)
+    {
+        this.currentGameState = newGameState;
     }
 
     void OnDrawGizmosSelected()
