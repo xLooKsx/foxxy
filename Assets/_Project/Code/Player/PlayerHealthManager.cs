@@ -9,6 +9,7 @@ public class PlayerHealthManager : MonoBehaviour
     [SerializeField] private int maxHp;
     [SerializeField] private int currentHp;
     private bool isInvunerable;
+    private bool IsDead;
 
     [Header("Components")]
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -17,6 +18,7 @@ public class PlayerHealthManager : MonoBehaviour
     {
         currentHp = maxHp;
         isInvunerable = false;
+        IsDead = false;
         Core.Instance.GameManager.SetCheckPoint(transform.position);
     }
 
@@ -52,14 +54,31 @@ public class PlayerHealthManager : MonoBehaviour
     {
         if (Core.Instance.GameManager.playerHaveExtraLive())
         {
-            Core.Instance.GameManager.AddExtraLive(-1);
-            this.currentHp = this.maxHp;
+            StartCoroutine(nameof(DieProcessCoroutine));
         }
         else
         {
-            transform.position = Core.Instance.GameManager.GetCheckPoint();
+            //Game Over
+            print("Player morreu T_T");
         }
 
+    }
+
+    IEnumerator DieProcessCoroutine()
+    {
+        Core.Instance.FadeSystem.Fade();
+        spriteRenderer.enabled = false;
+        Core.Instance.GameStateManager.SetNewGameState(GameState.Fade);
+        yield return new WaitUntil(() => Core.Instance.FadeSystem.IsFadeComplete());
+        transform.position = Core.Instance.GameManager.GetCheckPoint();
+        this.currentHp = this.maxHp;
+        Core.Instance.GameManager.AddExtraLive(-1);
+        yield return new WaitForSeconds(0.5f);
+        spriteRenderer.enabled = true;
+        Core.Instance.FadeSystem.Fade();
+        yield return new WaitUntil(() => Core.Instance.FadeSystem.IsFadeComplete());
+        Core.Instance.GameStateManager.SetNewGameState(GameState.GamePlay);
+        
     }
 
     IEnumerator ShowPlayerDamageCurotine()

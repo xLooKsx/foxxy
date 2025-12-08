@@ -5,6 +5,7 @@ public enum GameState
 {
     GamePlay,
     Pause,
+    Fade,
     Cutscene
 }
 
