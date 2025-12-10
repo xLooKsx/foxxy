@@ -30,6 +30,7 @@ public class PlayerHealthManager : MonoBehaviour
             if (!isInvunerable)
             {
                 currentHp -= value;
+                Core.Instance.UIManager.UpdateHP(currentHp);
 
                 if (currentHp <= 0)
                 {
@@ -72,9 +73,10 @@ public class PlayerHealthManager : MonoBehaviour
         yield return new WaitUntil(() => Core.Instance.FadeSystem.IsFadeComplete());
         transform.position = Core.Instance.GameManager.GetCheckPoint();
         this.currentHp = this.maxHp;
+        Core.Instance.UIManager.UpdateHP(currentHp);
         Core.Instance.GameManager.AddExtraLive(-1);
         yield return new WaitForSeconds(0.5f);
-        spriteRenderer.enabled = true;
+        spriteRenderer.enabled = true;        
         Core.Instance.FadeSystem.Fade();
         yield return new WaitUntil(() => Core.Instance.FadeSystem.IsFadeComplete());
         Core.Instance.GameStateManager.SetNewGameState(GameState.GamePlay);

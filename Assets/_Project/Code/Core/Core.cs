@@ -14,6 +14,10 @@ public class Core : MonoBehaviour
 
     [Header("Fade Manager")]
     public IFadeSystem FadeSystem;
+    
+    [Header("UI Manager")]
+    public IUIManager UIManager;
+    
     void Awake()
     {
         if(Instance != null && Instance != this)
@@ -35,5 +39,9 @@ public class Core : MonoBehaviour
     public void FadeRegistration(IFadeSystem fadeSystem)
     {
         this.FadeSystem = fadeSystem;
+    }
+    public void UIRegistration(IUIManager uIManager)
+    {
+        this.UIManager = uIManager;
     }
 }
