@@ -6,9 +6,20 @@ public class GameManager : MonoBehaviour, IGameManager
     [SerializeField] int currentGems;
     [SerializeField] Vector3 checkPoint;
 
+    void Start()
+    {
+        Invoke(nameof(UpdateUIOnStartup), 0.1f);
+    }
+
+    void UpdateUIOnStartup()
+    {
+        Core.Instance.UIManager.UpdateExtralives(extraLives);
+    }
+
     public void AddExtraLive(int quantity)
     {
         extraLives += quantity;
+        Core.Instance.UIManager.UpdateExtralives(extraLives);
     }
 
     public void AddGem()
@@ -23,7 +34,7 @@ public class GameManager : MonoBehaviour, IGameManager
 
     public bool playerHaveExtraLive()
     {
-        return extraLives > 0;
+        return extraLives >= 0;
     }
 
     public void SetCheckPoint(Vector3 checkPoint)

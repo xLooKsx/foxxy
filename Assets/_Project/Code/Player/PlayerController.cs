@@ -79,7 +79,12 @@ public class PlayerController : MonoBehaviour
     {
         if(currentGameState == GameState.GamePlay)
         {
-            HandlePlayerInput();    
+            HandlePlayerInput();
+        }
+        else
+        {
+            isWalking = false;
+            myRigidBody.linearVelocity = Vector2.zero;
         }
         ChangePlayerAnimation();
         CheckCoyoteJumpTime();

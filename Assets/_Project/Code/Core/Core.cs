@@ -3,10 +3,21 @@ using UnityEngine;
 public class Core : MonoBehaviour
 {
     public static Core Instance;
+
+    [Header("Game State")]
     public IGameStateManager GameStateManager {get; private set;} 
     [SerializeField] GameStateManager gameStateManager;
+    
+    [Header("Game Manager")]
     public IGameManager GameManager {get; private set;}
     [SerializeField] GameManager gameManager;
+
+    [Header("Fade Manager")]
+    public IFadeSystem FadeSystem;
+    
+    [Header("UI Manager")]
+    public IUIManager UIManager;
+    
     void Awake()
     {
         if(Instance != null && Instance != this)
@@ -23,5 +34,14 @@ public class Core : MonoBehaviour
     void OnDisable()
     {
         Destroy(this.gameObject);
+    }
+
+    public void FadeRegistration(IFadeSystem fadeSystem)
+    {
+        this.FadeSystem = fadeSystem;
+    }
+    public void UIRegistration(IUIManager uIManager)
+    {
+        this.UIManager = uIManager;
     }
 }
