@@ -27,6 +27,9 @@ public class PlayerCollisionHandler : MonoBehaviour
                     player.SetInteraction(output);
                 }
                 break;
+            case "Death":
+                playerHealthManager.HandleDamage(0, true);
+                break;
         }
     }
 
