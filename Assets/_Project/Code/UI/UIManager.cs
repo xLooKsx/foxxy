@@ -9,7 +9,7 @@ public class UIManager : MonoBehaviour, IUIManager
 
     void Start()
     {
-        Core.Instance.UIRegistration(this);
+        Core.Instance.UIRegistration(this);        
     }
 
     public void UpdateExtralives(int lives)
