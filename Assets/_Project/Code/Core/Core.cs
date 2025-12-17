@@ -16,7 +16,10 @@ public class Core : MonoBehaviour
     public IFadeSystem FadeSystem;
     
     [Header("UI Manager")]
-    public IUIManager UIManager;
+    public IUIManager UIManager;  
+    
+    [Header("UI Manager")]
+    public IAudioManager audioManager;
     
     void Awake()
     {
@@ -43,5 +46,9 @@ public class Core : MonoBehaviour
     public void UIRegistration(IUIManager uIManager)
     {
         this.UIManager = uIManager;
+    }
+    public void IAudioManagerRegistration(IAudioManager audioManager)
+    {
+        this.audioManager = audioManager;
     }
 }

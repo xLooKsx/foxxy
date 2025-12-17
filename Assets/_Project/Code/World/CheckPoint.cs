@@ -7,8 +7,13 @@ public class CheckPoint : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            if (checkPointBar.activeSelf)
+            {
+                Core.Instance.audioManager.PlaySfx(SfxType.Checkpoint);
+            }
             checkPointBar.SetActive(false);
             Core.Instance.GameManager.SetCheckPoint(this.transform.position);
+            
         }
     }
 }

@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(currentGameState == GameState.GamePlay)
+        if (currentGameState == GameState.GamePlay)
         {
             HandlePlayerInput();
         }
@@ -148,6 +148,7 @@ public class PlayerController : MonoBehaviour
                 if (collider2D.TryGetComponent<IDamage>(out IDamage script))
                 {
                     script.HandleDamage(1);
+                    Core.Instance.audioManager.PlaySfx(SfxType.DamageTaken);
                 }
                 Jump();
             }
@@ -162,9 +163,9 @@ public class PlayerController : MonoBehaviour
         {
             isDashing = true;
             int dashDirection = isLookingLeft ? -1 : 1;
-            myRigidBody.linearVelocityX = this.dashForce * dashDirection;   
+            myRigidBody.linearVelocityX = this.dashForce * dashDirection;
         }
-        
+
 
         HandleJumpInput();
         if (wallJumpCurrentLockTimer > 0)
@@ -206,9 +207,7 @@ public class PlayerController : MonoBehaviour
 
             if (isTouchingAWall)
             {
-                wallJumpCurrentLockTimer = wallJumpLockTimer;
-                myRigidBody.linearVelocity = new Vector2(wallJumpDirection * wallJumpForce.x, wallJumpForce.y);
-                Flip();
+                WallJump();
             }
             else if (isGrounded || currentCoyoteTime > 0)
             {
@@ -222,12 +221,21 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void WallJump()
+    {
+        wallJumpCurrentLockTimer = wallJumpLockTimer;
+        myRigidBody.linearVelocity = new Vector2(wallJumpDirection * wallJumpForce.x, wallJumpForce.y);
+        Core.Instance.audioManager.PlaySfx(SfxType.Jump);
+        Flip();
+    }
+
     void Jump()
     {
 
         myRigidBody.linearVelocityY = 0;
         myRigidBody.AddForceY(jumpForce, ForceMode2D.Impulse);
         hasJumped = true;
+        Core.Instance.audioManager.PlaySfx(SfxType.Jump);
     }
 
     void CheckCoyoteJumpTime()

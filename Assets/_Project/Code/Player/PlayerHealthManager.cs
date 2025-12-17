@@ -54,7 +54,7 @@ public class PlayerHealthManager : MonoBehaviour
     private void HandlePlayerDeath()
     {
         if (Core.Instance.GameManager.playerHaveExtraLive())
-        {
+        {            
             StartCoroutine(nameof(DieProcessCoroutine));
         }
         else
@@ -67,6 +67,7 @@ public class PlayerHealthManager : MonoBehaviour
 
     IEnumerator DieProcessCoroutine()
     {
+        Core.Instance.audioManager.PlaySfx(SfxType.Death);
         Core.Instance.FadeSystem.Fade();
         spriteRenderer.enabled = false;
         Core.Instance.GameStateManager.SetNewGameState(GameState.Fade);
@@ -85,6 +86,7 @@ public class PlayerHealthManager : MonoBehaviour
 
     IEnumerator ShowPlayerDamageCurotine()
     {
+        Core.Instance.audioManager.PlaySfx(SfxType.DamageTaken);
         spriteRenderer.color = Color.red;
         yield return new WaitForSeconds(0.2f);
         spriteRenderer.color = Color.white;

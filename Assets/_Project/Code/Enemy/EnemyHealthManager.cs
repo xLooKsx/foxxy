@@ -23,10 +23,15 @@ public class EnemyHealthManager : MonoBehaviour, IDamage
         {
             HandleDeath();
         }
+        else
+        {
+            Core.Instance.audioManager.PlaySfx(SfxType.DamageTaken);
+        }
     }
 
     private void HandleDeath()
     {
+        Core.Instance.audioManager.PlaySfx(SfxType.Death);
         rootObject.SetActive(false);
     }
 }
