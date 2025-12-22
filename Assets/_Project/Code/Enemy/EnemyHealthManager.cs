@@ -5,7 +5,7 @@ public class EnemyHealthManager : MonoBehaviour, IDamage
 
     [Header("HealthParam")]
     [SerializeField] private int maxHp;
-    private int currentHp;
+    [SerializeField] private int currentHp;
 
     [Header("Components")]
     [SerializeField] private GameObject rootObject;
@@ -13,6 +13,7 @@ public class EnemyHealthManager : MonoBehaviour, IDamage
     void Start()
     {
         currentHp = maxHp;
+        Core.Instance.GameStateManager.OnGameStateChanged += this.ResetPosition;
     }
 
     public void HandleDamage(int value)
@@ -33,5 +34,17 @@ public class EnemyHealthManager : MonoBehaviour, IDamage
     {
         Core.Instance.audioManager.PlaySfx(SfxType.Death);
         rootObject.SetActive(false);
+    }
+
+    public void ResetPosition(GameState gameState)
+    {
+        if (GameState.Fade.Equals(gameState))
+        {
+            if (!rootObject.gameObject.activeSelf)
+            {
+                rootObject.SetActive(true);                                
+            }
+            this.currentHp = maxHp;
+        }
     }
 }
