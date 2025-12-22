@@ -9,7 +9,6 @@ public class PlayerHealthManager : MonoBehaviour
     [SerializeField] private int maxHp;
     [SerializeField] private int currentHp;
     private bool isInvunerable;
-    private bool IsDead;
 
     [Header("Components")]
     [SerializeField] private SpriteRenderer spriteRenderer;
@@ -18,7 +17,6 @@ public class PlayerHealthManager : MonoBehaviour
     {
         currentHp = maxHp;
         isInvunerable = false;
-        IsDead = false;
         Core.Instance.GameManager.SetCheckPoint(transform.position);
     }
 

@@ -4,12 +4,23 @@ using UnityEngine;
 public class UIManager : MonoBehaviour, IUIManager
 {
 
+    [Header("Player info")]
     [SerializeField] TMP_Text extraLives;
     [SerializeField] GameObject[] hpHearts;
 
+    [Header("Cutscene")]
+    [SerializeField] GameObject blackBars;
+
+    [Header("Level name display")]
+    [SerializeField] GameObject levelNamePanelDisplay;
+    [SerializeField] TMP_Text levelNameText;
+
+
+
     void Start()
     {
-        Core.Instance.UIRegistration(this);        
+        Core.Instance.UIRegistration(this);
+        Core.Instance.GameStateManager.OnGameStateChanged += this.LisenGameStateChange;
     }
 
     public void UpdateExtralives(int lives)
@@ -29,5 +40,21 @@ public class UIManager : MonoBehaviour, IUIManager
         {
             hpHearts[i].SetActive(true);
         }
+    }
+
+    private void LisenGameStateChange(GameState newGameState)
+    {
+        if (GameState.Cutscene.Equals(newGameState))
+        {
+            this.blackBars.SetActive(true);
+        }else{
+            this.blackBars.SetActive(false);
+        }
+    }
+
+    public void DisplayLevelName(string levelName)
+    {
+        this.levelNameText.text = levelName;
+        this.levelNamePanelDisplay.SetActive(true);
     }
 }

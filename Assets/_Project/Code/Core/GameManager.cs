@@ -5,10 +5,17 @@ public class GameManager : MonoBehaviour, IGameManager
     [SerializeField] int extraLives;
     [SerializeField] int currentGems;
     [SerializeField] Vector3 checkPoint;
+    [SerializeField] string levelName;
 
     void Start()
     {
         Invoke(nameof(UpdateUIOnStartup), 0.1f);
+        Invoke(nameof(DisplayLevelName), 0.2f);
+    }
+
+    private void DisplayLevelName()
+    {
+        Core.Instance.UIManager.DisplayLevelName(levelName);
     }
 
     void UpdateUIOnStartup()

@@ -12,6 +12,10 @@ public class Core : MonoBehaviour
     public IGameManager GameManager {get; private set;}
     [SerializeField] GameManager gameManager;
 
+    [Header("VFX Manager")]
+    public IVfxManager VfxManager {get; private set;}
+    [SerializeField] VfxManager vfxManager;
+
     [Header("Fade Manager")]
     public IFadeSystem FadeSystem;
     
@@ -32,6 +36,7 @@ public class Core : MonoBehaviour
         Instance = this;
         this.GameStateManager = gameStateManager;
         this.GameManager = gameManager;
+        this.VfxManager = vfxManager;
     }
 
     void OnDisable()

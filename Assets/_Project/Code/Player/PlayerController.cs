@@ -147,6 +147,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (collider2D.TryGetComponent<IDamage>(out IDamage script))
                 {
+                    Core.Instance.VfxManager.PlayVfx(VfxType.Death, transform.position);
                     script.HandleDamage(1);
                     Core.Instance.audioManager.PlaySfx(SfxType.DamageTaken);
                 }
