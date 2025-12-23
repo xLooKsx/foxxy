@@ -37,6 +37,8 @@ public class Core : MonoBehaviour
         this.GameStateManager = gameStateManager;
         this.GameManager = gameManager;
         this.VfxManager = vfxManager;
+
+        DontDestroyOnLoad(this.gameObject);
     }
 
     void OnDisable()

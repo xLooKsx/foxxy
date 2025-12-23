@@ -47,4 +47,9 @@ public class EnemyHealthManager : MonoBehaviour, IDamage
             this.currentHp = maxHp;
         }
     }
+
+    void OnDisable()
+    {
+        Core.Instance.GameStateManager.OnGameStateChanged -= this.ResetPosition;
+    }
 }
